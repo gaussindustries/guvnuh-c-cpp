@@ -32,24 +32,48 @@ Phase-2 will migrate from Modbus RTU to **EtherCAT**, enabling deterministic dis
 
 ```
 ├── stm32/                  ↳ Real-time control firmware (C/C++ + FreeRTOS)
-│   ├── drivers/            ↳ ADS131M04, encoder, RS-485
-│   ├── middleware/link/    ↳ UART DMA · COBS · CRC16
-│   ├── control/            ↳ PLL · SEIG excitation · fault logic
-│   ├── app/                ↳ Config · telemetry · command handler
-│   └── rtos/               ↳ Task setup, priorities, hooks
+│   ├── app/                ↳ Config · telemetry packer · command handler
+│   ├── control/            ↳ PLL · SEIG excitation · protections
+│   ├── drivers/            ↳ ADS131M04 · encoder · RS-485 (Modbus master)
+│   │   ├── ads131/
+│   │   ├── encoder/
+│   │   └── rs485_modbus/
+│   ├── middleware/
+│   │   ├── link/           ↳ UART DMA · COBS · CRC16
+│   │   └── utils/          ↳ ring buffers · fixed-point helpers · logging shims
+│   ├── rtos/
+│   │   ├── tasks/          ↳ task_control · task_link · task_telemetry
+│   │   ├── freertos_config/↳ FreeRTOSConfig.h (STM32-specific)
+│   │   └── hooks/          ↳ idle/tick/malloc-failed hooks · trace points
+│   ├── bsp/                ↳ clocks · pins · board init
+│   ├── CMakeLists.txt
+│   └── main.c
 │
-├── esp32/                  ↳ Networking & UI gateway (C/C++ + ESP-IDF)
-│   ├── link/               ↳ UART bridge identical framing
-│   ├── net/                ↳ MQTT · HTTPS · SNTP
-│   ├── ota/                ↳ Self-update + STM32 relay
-│   ├── ui/                 ↳ Minimal local web status
-│   └── rtos/               ↳ FreeRTOS task layout
+├── esp32/                  ↳ Networking & UI gateway (C/C++ + ESP-IDF/FreeRTOS)
+│   ├── link/               ↳ UART bridge (COBS/CRC, backpressure)
+│   ├── net/                ↳ MQTT/HTTPS client · reconnect/backoff · SNTP
+│   ├── ota/                ↳ OTA + optional STM32 relay
+│   ├── ui/                 ↳ Minimal local status HTTP server
+│   ├── rtos/
+│   │   └── tasks/          ↳ task_mqtt · task_uart_bridge · task_time_sync
+│   ├── CMakeLists.txt
+│   └── main.cpp
 │
-├── docs/                   ↳ Architecture · control flow · standards
-├── tests/                  ↳ HIL and long-run link tests
-├── tools/                  ↳ Telemetry schema · CRC/COBS generators
-├── build/                  ↳ Out-of-tree artifacts
-└── ci/                     ↳ Future automated build/test scripts
+├── common/                 ↳ Shared C/C++ headers and libs (built for both MCUs)
+│   ├── include/            ↳ cobs.h · crc16.h · proto.hpp · telem.hpp
+│   └── src/                ↳ cobs.c · crc16.c
+│
+├── third_party/            ↳ External deps (optional)
+│   └── freertos-kernel/    ↳ Vendored FreeRTOS for STM32 (if used)
+│
+├── docs/                   ↳ Architecture · control flow · standards & refs
+│   └── 10_architecture/    ↳ architecture.md · diagrams
+│
+├── tests/                  ↳ HIL · soak · property/regression tests
+├── tools/                  ↳ Telemetry schema · payload fuzzers
+├── build/                  ↳ Out-of-tree build artifacts
+├── ci/                     ↳ CI/CD scripts (firmware builds, static analysis)
+└── README.md
 ```
 
 A separate repository, **`guvnuh-digest`**, will handle ingestion, visualization, and long-term storage of telemetry data.
