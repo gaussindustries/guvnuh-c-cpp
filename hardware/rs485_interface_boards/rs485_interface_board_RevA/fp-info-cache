@@ -1,4 +1,4 @@
-7049922070697
+8812419988965
 connector_01x03
 PinHeader_1x03_P1.00mm_Vertical
 Through hole straight pin header, 1x03, 1.00mm pitch, single row
@@ -6,6 +6,13 @@ Through hole pin header THT 1x03 1.00mm single row
 0
 3
 3
+connector_pinheader_2.54mm
+PinHeader_1x01_P2.54mm_Vertical
+Through hole straight pin header, 1x01, 2.54mm pitch, single row
+Through hole pin header THT 1x01 2.54mm single row
+0
+1
+1
 connector_pinheader_2.54mm
 PinHeader_1x03_P2.54mm_Vertical
 Through hole straight pin header, 1x03, 2.54mm pitch, single row

@@ -490,7 +490,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "rs485_interface_board_RevA.step",
       "svg": "",
       "vrml": ""
     },
